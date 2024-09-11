@@ -1,0 +1,62 @@
+;
+; arpshit.inf
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System ; TODO: specify appropriate Class
+ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider    = %ManufacturerName%
+CatalogFile = arpshit.cat
+DriverVer   = ; TODO: set DriverVer in stampinf property pages
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+arpshit.sys = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName% = Standard,NT$ARCH$.10.0...16299 ; %13% support introduced in build 16299
+
+[Standard.NT$ARCH$.10.0...16299]
+%arpshit.DeviceDesc% = arpshit_Device, Root\arpshit ; TODO: edit hw-id
+
+[arpshit_Device.NT]
+CopyFiles = File_Copy
+
+[File_Copy]
+arpshit.sys
+
+;-------------- Service installation
+[arpshit_Device.NT.Services]
+AddService = arpshit,%SPSVCINST_ASSOCSERVICE%, arpshit_Service_Inst
+
+; -------------- arpshit driver install sections
+[arpshit_Service_Inst]
+DisplayName    = %arpshit.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\arpshit.sys
+
+[arpshit_Device.NT.Wdf]
+KmdfService = arpshit, arpshit_wdfsect
+
+[arpshit_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ManufacturerName = "<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "arpshit Installation Disk"
+arpshit.DeviceDesc = "arpshit Device"
+arpshit.SVCDESC = "arpshit Service"
